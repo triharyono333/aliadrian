@@ -1,0 +1,144 @@
+<?php
+// $Id$
+
+function custom_form_alter_form_alter(&$form, &$form_state, $form_id) {
+	//print "<pre>".print_r($form, true)."</pre>";
+	//print $form_id;
+	global $user;
+	if ($user->uid != 1) {
+            $style = "<style>
+                        .vertical-tabs  { display:none; }
+                        #edit-body-und-0-format { display:none; }
+                        #node-admin-content #edit-options  { display:none; }
+                        #node-admin-content #edit-filters  { display:none; }
+                      </style>";
+            print $style;
+	}
+	if($form_id == 'page_node_form') {
+		$form['actions']['submit']['#submit'][] = 'page_node_form_submit_handler';
+	}
+	else if($form_id == 'achievement_node_form') {
+		$form['actions']['submit']['#submit'][] = 'achievement_node_form_submit_handler';
+	}
+	else if($form_id == 'banner_node_form') {
+		$form['actions']['submit']['#submit'][] = 'banner_node_form_submit_handler';
+	}
+	else if($form_id == 'bike_category_node_form') {
+		$form['actions']['submit']['#submit'][] = 'bike_category_node_form_submit_handler';
+	}
+	else if($form_id == 'bike_node_form') {
+		$form['actions']['submit']['#submit'][] = 'bike_node_form_submit_handler';
+	}
+	else if($form_id == 'circuit_node_form') {
+		$form['actions']['submit']['#submit'][] = 'circuit_node_form_submit_handler';
+	}
+	else if($form_id == 'gallery_category_node_form') {
+		$form['actions']['submit']['#submit'][] = 'gallery_category_node_form_submit_handler';
+	}
+	else if($form_id == 'gallery_node_form') {
+		$form['actions']['submit']['#submit'][] = 'gallery_node_form_submit_handler';
+	}
+	else if($form_id == 'merchandise_category_node_form') {
+		$form['actions']['submit']['#submit'][] = 'merchandise_category_node_form_submit_handler';
+	}
+	else if($form_id == 'merchandise_node_form') {
+		$form['actions']['submit']['#submit'][] = 'merchandise_node_form_submit_handler';
+	}
+	else if($form_id == 'news_node_form') {
+		$form['actions']['submit']['#submit'][] = 'news_node_form_submit_handler';
+	}
+	else if($form_id == 'race_country_node_form') {
+		$form['actions']['submit']['#submit'][] = 'race_country_node_form_submit_handler';
+	}
+	else if($form_id == 'race_schedule_node_form') {
+		$form['actions']['submit']['#submit'][] = 'race_schedule_node_form_submit_handler';
+	}
+	else if($form_id == 'rider_node_form') {
+		$form['actions']['submit']['#submit'][] = 'rider_node_form_submit_handler';
+	}
+	else if($form_id == 'sponsor_category_node_form') {
+		$form['actions']['submit']['#submit'][] = 'sponsor_category_node_form_submit_handler';
+	}
+	else if($form_id == 'sponsor_node_form') {
+		$form['actions']['submit']['#submit'][] = 'sponsor_node_form_submit_handler';
+	}
+	else if($form_id == 'video_category_node_form') {
+		$form['actions']['submit']['#submit'][] = 'video_category_node_form_submit_handler';
+	}
+	else if($form_id == 'video_node_form') {
+		$form['actions']['submit']['#submit'][] = 'video_node_form_submit_handler';
+	}
+}
+
+function page_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/page';   
+}
+
+function achievement_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/achievement';   
+}
+
+function banner_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/banner';   
+}
+
+function gallery_category_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/gallery-category';   
+}
+
+function gallery_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/gallery';   
+}
+
+function bike_category_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/bike-category';   
+}
+
+function bike_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/bike';   
+}
+
+function circuit_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/circuit';   
+}
+
+function merchandise_category_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/merchandise-category';   
+}
+
+function merchandise_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/merchandise';   
+}
+
+function race_country_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/race-country';   
+}
+
+function race_schedule_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/race-schedule';   
+}
+
+function news_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/news';   
+}
+
+function rider_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/rider';   
+}
+
+function sponsor_category_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/sponsor-category';   
+}
+
+function sponsor_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/sponsor';   
+}
+
+function video_category_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/video-category';   
+}
+
+function video_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/video';   
+}
+?>

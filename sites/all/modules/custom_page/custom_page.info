@@ -1,0 +1,6 @@
+; $Id$
+name = Custom Pages
+description = Module to Create Custom Pages
+version = "0.1-Tri"
+package = extra
+core = 7.x

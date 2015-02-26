@@ -1,0 +1,671 @@
+<?php
+
+// $Id$
+global $base_url;
+define("PATH_TO_FILE", $base_url."/sites/default/files/");
+
+function custom_page_menu() {
+    
+        $items['user/%user/manage'] = array(
+            'title' => t('Admin Page'),
+            'page callback' => 'drupal_goto',
+            'page arguments' => array('admin/node_content'),
+            'access callback' => 'user_is_logged_in',
+            'type' => MENU_LOCAL_TASK,
+        );
+        $items['change_language'] = array(
+            'title' => t('language'),
+            'description' => 'language',
+            'page callback' => 'change_language',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['circuit'] = array(
+            'title' => t('Circuit'),
+            'description' => 'circuit',
+            'page callback' => 'circuit',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['profile/achievement'] = array(
+            'title' => t('Achievement'),
+            'description' => 'achievement',
+            'page callback' => 'achievement',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['profile/biography'] = array(
+            'title' => t('Biography'),
+            'description' => 'biography',
+            'page callback' => 'biography',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['profile/bike'] = array(
+            'title' => t('Bike'),
+            'description' => 'bike',
+            'page callback' => 'bike',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['sponsor'] = array(
+            'title' => t('Sponsor'),
+            'description' => 'sponsor',
+            'page callback' => 'sponsor',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['gallery/video'] = array(
+            'title' => t('Video'),
+            'description' => 'video',
+            'page callback' => 'video',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['gallery/photo'] = array(
+            'title' => t('Photo'),
+            'description' => 'photo',
+            'page callback' => 'photo',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['schedule'] = array(
+            'title' => t('Schedule'),
+            'description' => 'schedule',
+            'page callback' => 'schedule',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['merchandise'] = array(
+            'title' => t('merchandise'),
+            'description' => 'merchandise',
+            'page callback' => 'merchandise',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['contact'] = array(
+            'title' => t('Contact'),
+            'description' => 'contact',
+            'page callback' => 'contact',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['subscribe'] = array(
+            'title' => t('Subscribe'),
+            'description' => 'subscribe',
+            'page callback' => 'subscribe',
+            'access arguments' => true,
+            'access callback' => true,
+            'type' =>  MENU_CALLBACK,
+	);
+        
+	return $items;
+}
+
+
+function change_language() {
+    $cur_url = $_GET['url'];
+    $lang = arg(1);
+    $_SESSION['language'] = $lang;
+    drupal_goto($cur_url);
+}
+
+function circuit() {
+    $no = 1;
+    $output = '<h2>Circuit</h2><div class="blog-posts row">';
+    $node_circuit = _get_node_list('circuit', '', 'ASC');
+    foreach($node_circuit as $circuit) { 
+        $circuit_uri = $circuit->field_circuit_image[LANGUAGE_NONE][0]['uri'];
+        $circuit_image = str_replace("public://", "", $circuit_uri);
+        $circuit_image = PATH_TO_FILE . $circuit_image;
+        $circuit_date = $circuit->field_circuit_date[LANGUAGE_NONE][0]['value'];
+        $circuit_date = _date_format($circuit_date, 'd M Y');
+        $circuit_city = $circuit->field_circuit_city[LANGUAGE_NONE][0]['value'];
+        $circuit_country = $circuit->field_circuit_country[LANGUAGE_NONE][0]['value'];
+        $output .= '
+            <div class="col-sm-6 col-md-4">
+               <article class="post post-grid">
+                  <div class="post-content">
+                     <div class="post-number">'.$no.'</div>
+                     <div class="post-date">'.$circuit_date.'</div>
+                  </div>
+                    <div class="post-image">
+                        <div class="image-container">
+                            <a href="#"><img src="'.$circuit_image.'"></a>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <h4 class="entry-title">'.$circuit->title.', '.$circuit_country.'</h4>
+                    </div>
+                </article>
+            </div>';
+        $no = $no + 1;
+    }
+    $output .= '</div>';
+    
+    return $output;
+}
+
+function achievement(){
+    $output = '<h2>Achievement</h2><table class="table table-hover"><tbody>';
+    $node_achievement = _get_node_list('achievement', '', 'ASC');
+    foreach($node_achievement as $achievement) { 
+        $achievement_year = $achievement->field_achievement_year[LANGUAGE_NONE][0]['value'];
+        $body = $achievement->body[LANGUAGE_NONE][0]['value'];
+        $output .= '
+            <tr>
+              <td><strong>'.$achievement_year.'</strong></td>
+              <td>
+                 <ul>
+                    <li>'.$body.'</li>
+                 </ul>
+              </td>
+            </tr>';
+    }
+    $output .= "</tbody></table>";
+    return $output;
+}
+
+function biography() {
+    global $language;
+    $output = '';
+    $node_rider = _get_node_list('rider');
+    foreach($node_rider as $rider) { 
+        $rider_uri = $rider->field_rider_photo[LANGUAGE_NONE][0]['uri'];
+        $rider_image = str_replace("public://", "", $rider_uri);
+        $rider_image = PATH_TO_FILE . $rider_image;
+        if ($language->prefix == 'id') {
+            $body = $rider->body[LANGUAGE_NONE][0]['value'];
+        } else {
+            $body = $rider->field_rider_description_english[LANGUAGE_NONE][0]['value'];
+        }
+        $output .= '
+        <h2>'.$rider->title.' <span>'.$rider->field_rider_last_name[LANGUAGE_NONE][0]['value'].'</span></h2>
+        <div class="row">
+             <div class="col-sm-4">
+                <div class="team-member style-default">
+                    <div class="image-container">
+                       <img src="'.$rider_image.'" alt="Ali Adrian Rusmiputro">
+                    </div>
+                </div>
+                <table class="table table-hover">
+                   <tbody>
+                      <tr>
+                         <td><strong>Team</strong></td>
+                         <td>'.$rider->field_rider_team[LANGUAGE_NONE][0]['value'].'</td>
+                      </tr>
+                      <tr>
+                         <td><strong>Date of Birth</strong></td>
+                         <td>'._date_format($rider->field_rider_birth[LANGUAGE_NONE][0]['value'], 'd M Y').'</td>
+                      </tr>
+                      <tr>
+                         <td><strong>Hobbies</strong></td>
+                         <td>'.$rider->field_rider_hobby[LANGUAGE_NONE][0]['value'].'</td>
+                      </tr>
+                      <tr>
+                         <td><strong>Favourite Racer</strong></td>
+                         <td>'.$rider->field_rider_favourite_race[LANGUAGE_NONE][0]['value'].'</td>
+                      </tr>
+                      <tr>
+                         <td><strong>Favourite Circuit</strong></td>
+                         <td>'.$rider->field_rider_favourite_circuit[LANGUAGE_NONE][0]['value'].'</td>
+                      </tr>
+                      <tr>
+                         <td><strong>Website</strong></td>
+                         <td><a href="'.$rider->field_rider_website[LANGUAGE_NONE][0]['value'].'" target="_blank">'.$rider->field_rider_website[LANGUAGE_NONE][0]['value'].'</a></td>
+                      </tr>
+                      <tr>
+                         <td><strong>Twitter</strong></td>
+                         <td><a href="https://twitter.com/'.$rider->field_rider_twitter[LANGUAGE_NONE][0]['value'].'" target="_blank">@'.$rider->field_rider_twitter[LANGUAGE_NONE][0]['value'].'</a></td>
+                      </tr>
+                      <tr>
+                         <td><strong>Facebook</strong></td>
+                         <td><a href="'.$rider->field_rider_facebook[LANGUAGE_NONE][0]['value'].'" target="_blank">'.$rider->field_rider_facebook[LANGUAGE_NONE][0]['value'].'</a></td>
+                      </tr>
+                      <tr>
+                         <td><strong>Youtube</strong></td>
+                         <td><a href="'.$rider->field_rider_youtube[LANGUAGE_NONE][0]['value'].'" target="_blank">'.$rider->field_rider_youtube[LANGUAGE_NONE][0]['value'].' </a></td>
+                      </tr>
+                   </tbody>
+                </table>
+             </div>
+             <div class="col-sm-1">&nbsp;</div>
+             <div class="col-sm-7">'.$body.'</div>
+             <div class="clearfix"></div>
+        </div>';
+    }
+    return $output;
+}
+
+function bike() {
+    $output = '<h2>The <span>Bike</span></h2>';
+    $node_bike = _get_node_list('bike');
+    foreach($node_bike as $bike) {
+        $bike_images = $bike->field_bike_image[LANGUAGE_NONE];
+        foreach($bike_images as $image) {
+            $bike_uri = $image['uri'];
+            $bike_image = str_replace("public://", "", $bike_uri);
+            $bike_image = PATH_TO_FILE . $bike_image;
+            $bike_image_output .= '
+                <a href="'.$bike_image.'" class="image hover-style3">
+                    <img src="'.$bike_image.'" alt="">
+                    <div class="image-extras"></div>
+                </a>';
+        }
+        
+        $bike_categories = $bike->field_bike_category[LANGUAGE_NONE];
+        //print "<pre>".print_r($bike->field_bike_category[LANGUAGE_NONE], true)."</pre>";
+        foreach($bike_categories as $category) {
+          $category_nid = $category['target_id'];
+          $bike_category = node_load($category_nid);
+          $bike_category_output .= '
+              <h3>'.$bike_category->title.':</h3>
+              '.$bike_category->body[LANGUAGE_NONE][0]['value'];
+        }
+        
+        $output .= '
+            <div class="post-wrapper">
+                <div class="row">
+                   <div class="col-sm-4">
+                      <div class="soap-gallery metro-style gallery-col-1 box">
+                         <div class="gallery-wrapper">
+                            '.$bike_image_output.'
+                         </div>
+                      </div>
+                   </div>
+                   <div class="col-sm-1"></div>
+                   <div class="col-sm-7">
+                        '.$bike_category_output.'
+                   </div>
+                   <div class="clearfix"></div>
+                </div>
+            </div>';
+    }
+    return $output;
+}
+
+function sponsor(){
+    $output = '<h2>Sponsor</h2><div class="blog-posts row">';
+    $node_sponsor_category = _get_node_list('sponsor_category', '', 'ASC');
+    foreach($node_sponsor_category as $sponsor_category) {
+        $category_id = $sponsor_category->nid;
+        if ($category_id == 28) {
+            $output .= '';
+            $class = 'col-sm-6';
+        } else if ($category_id == 29) {
+            $output .= '<div class="clearfix"></div>';
+            $class = 'col-sm-4';
+        } else if ($category_id == 30) {
+            $output .= '<div class="clearfix"></div>';
+            $class = 'col-sm-3';
+        }
+        $query = "SELECT nid FROM node a, field_data_field_sponsor_category b "
+                . " WHERE a.nid = b.entity_id AND b.field_sponsor_category_target_id = ".$category_id;
+        $result = db_query($query);
+        foreach ($result as $node_sponsor) {
+            $nid = $node_sponsor->nid;
+            $sponsor = node_load($nid);
+            $sponsor_uri = $sponsor->field_sponsor_image[LANGUAGE_NONE][0]['uri'];
+            $sponsor_image = str_replace("public://", "", $sponsor_uri);
+            $sponsor_image = PATH_TO_FILE . $sponsor_image;
+            $sponsor_url = $sponsor->field_sponsor_url[LANGUAGE_NONE][0]['value'];
+            
+            $output .= '
+                <div class="'.$class.'">
+                    <article class="post post-grid">
+                        <div class="post-image">
+                            <div class="image-container">
+                                <a href="'.$sponsor_url.'" target="_blank"><img alt="" src="'.$sponsor_image.'"></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>';
+        }
+    }
+    $output .= "</div>";
+    return $output; 
+}
+
+function video() {
+    global $base_url;
+    $category_id = arg(2);
+    $output = '<h2>Adrian`s Gallery</h2><ul class="gallery-menu">';
+    if (!isset($category_id)) {
+        $node_video_category = _get_node_list('video_category', 1, 'ASC'); 
+        foreach($node_video_category as $video_category) {
+            $category_id = $video_category->nid;
+        }
+    }
+    
+    $node_video_category = _get_node_list('video_category', '', 'ASC');
+    foreach($node_video_category as $video_category) {
+        $video_category_id = $video_category->nid;
+        if ($video_category_id == $category_id) $active = 'active';
+        else $active = '';
+        $output .= '<li class="'.$active.'"><a href="'.$base_url.'/gallery/video/'.$video_category_id.'">'.$video_category->title.'</a></li>';
+    }
+    $output .= '</ul>';
+    
+    if (isset($category_id)) {
+        $output .= '<div class="soap-gallery small-post"><div class="row">';
+        $query = "SELECT nid FROM node a, field_data_field_video_category b "
+                . " WHERE a.nid = b.entity_id AND b.field_video_category_target_id = ".$category_id;
+        $result = db_query($query);
+        foreach ($result as $node_video) {
+            $nid = $node_video->nid;
+            $video = node_load($nid);
+            $video_url = $video->field_video_link[LANGUAGE_NONE][0]['value'];
+            $youtube_embed = $video->field_youtube[LANGUAGE_NONE][0]['value'];
+
+            $output .= '
+                <div class="col-sms-6 col-sm-4 col-md-3">
+                    <article>
+                        <a href="'.$video_url.'" class="image hover-style2 popup-youtube">
+                            '.$youtube_embed.'
+                            <div class="image-extras"></div>
+                        </a>
+                    </article>
+                </div>';
+        }
+    }
+    $output .= "</div></div>";
+    return $output; 
+}
+
+function photo() {
+    global $base_url;
+    $category_id = arg(2);
+    $output = '<h2>Adrian`s Gallery</h2><ul class="gallery-menu">';
+    if (!isset($category_id)) {
+        $node_gallery_category = _get_node_list('gallery_category', 1, 'ASC'); 
+        foreach($node_gallery_category as $gallery_category) {
+            $category_id = $gallery_category->nid;
+        }
+    }
+    
+    $node_gallery_category = _get_node_list('gallery_category', '', 'ASC');
+    foreach($node_gallery_category as $gallery_category) {
+        $gallery_category_id = $gallery_category->nid;
+        if ($gallery_category_id == $category_id) $active = 'active';
+        else $active = '';
+        $output .= '<li class="'.$active.'"><a href="'.$base_url.'/gallery/photo/'.$gallery_category_id.'">'.$gallery_category->title.'</a></li>';
+    }
+    $output .= '</ul>';
+    
+    if (isset($category_id)) {
+        $output .= '<div class="soap-gallery small-post"><div class="row">';
+        $query = "SELECT nid FROM node a, field_data_field_gallery_category b "
+                . " WHERE a.nid = b.entity_id AND b.field_gallery_category_target_id = ".$category_id;
+        $result = db_query($query);
+        foreach ($result as $node_gallery) {
+            $nid = $node_gallery->nid;
+            $gallery = node_load($nid);
+            $gallery_uri = $gallery->field_gallery_image[LANGUAGE_NONE][0]['uri'];
+            $gallery_image = str_replace("public://", "", $gallery_uri);
+            $gallery_image = PATH_TO_FILE . $gallery_image;
+
+            $output .= '
+                <div class="col-sms-6 col-sm-4 col-md-3">
+                    <article>
+                        <a href="'.$gallery_image.'" class="image soap-mfp-popup">
+                            <img src="'.$gallery_image.'" alt="'.$gallery->title.'">
+                            <div class="image-extras"></div>
+                        </a>
+                    </article>
+                </div>';
+        }
+    }
+    $output .= "</div></div>";
+    return $output; 
+}
+
+function schedule() {
+    $output = '<h2>Race <span>Schedule</span></h2><table class="table table-hover schedule"><tbody>';
+    $node_race_schedule = _get_node_list('race_schedule', '', 'ASC');
+    foreach($node_race_schedule as $race_schedule) {
+        $country_id = $race_schedule->field_race_country[LANGUAGE_NONE][0]['target_id'];
+        if (isset($country_id)) {
+            $race_country = node_load($country_id);
+            $race_country_uri = $race_country->field_country_flag[LANGUAGE_NONE][0]['uri'];
+            $race_country_image = str_replace("public://", "", $race_country_uri);
+            $race_country_image = PATH_TO_FILE . $race_country_image;
+            $output .= '
+            <tr>
+               <td>'._date_format($race_schedule->field_race_date[LANGUAGE_NONE][0]['value'], 'd M Y').'</td>
+               <td>
+                  <p style="background-image: url('.$race_country_image.')">
+                  <strong>Round '.$race_schedule->field_race_round_number[LANGUAGE_NONE][0]['value'].'</strong> '.$race_schedule->title.'</p>
+               </td>
+            </tr>';
+        }
+    }
+    
+    $output .= '</tbody></table>';
+    return $output; 
+}
+
+function merchandise() {
+    global $base_url;
+    $category_id = arg(2);
+    $output = '<h2>Adrian`s Gallery</h2><ul class="gallery-menu">';
+    if (!isset($category_id)) {
+        $node_gallery_category = _get_node_list('gallery_category', 1, 'ASC'); 
+        foreach($node_gallery_category as $gallery_category) {
+            $category_id = $gallery_category->nid;
+        }
+    }
+    
+    $node_gallery_category = _get_node_list('gallery_category', '', 'ASC');
+    foreach($node_gallery_category as $gallery_category) {
+        $gallery_category_id = $gallery_category->nid;
+        if ($gallery_category_id == $category_id) $active = 'active';
+        else $active = '';
+        $output .= '<li class="'.$active.'"><a href="'.$base_url.'/gallery/photo/'.$gallery_category_id.'">'.$gallery_category->title.'</a></li>';
+    }
+    $output .= '</ul>';
+    
+    if (isset($category_id)) {
+        $output .= '<div class="soap-gallery small-post"><div class="row">';
+        $query = "SELECT nid FROM node a, field_data_field_gallery_category b "
+                . " WHERE a.nid = b.entity_id AND b.field_gallery_category_target_id = ".$category_id;
+        $result = db_query($query);
+        foreach ($result as $node_gallery) {
+            $nid = $node_gallery->nid;
+            $gallery = node_load($nid);
+            $gallery_uri = $gallery->field_gallery_image[LANGUAGE_NONE][0]['uri'];
+            $gallery_image = str_replace("public://", "", $gallery_uri);
+            $gallery_image = PATH_TO_FILE . $gallery_image;
+
+            $output .= '
+                <div class="col-sms-6 col-sm-4 col-md-3">
+                    <article>
+                        <a href="'.$gallery_image.'" class="image soap-mfp-popup">
+                            <img src="'.$gallery_image.'" alt="'.$gallery->title.'">
+                            <div class="image-extras"></div>
+                        </a>
+                    </article>
+                </div>';
+        }
+    }
+    $output .= "</div></div>";
+    return $output; 
+}
+
+function contact_form($form, &$form_state) {
+    $form['first_name'] = array(
+        '#type' => 'textfield',
+        '#attributes' => array('placeholder' => t('First Name')),
+    );
+    $form['last_name'] = array(
+        '#type' => 'textfield',
+        '#attributes' => array('placeholder' => t('Last Name')),
+    );
+    $form['subject'] = array(
+        '#type' => 'textfield',
+        '#attributes' => array('placeholder' => t('Subject')),
+    );
+    $form['email_address'] = array(
+        '#type' => 'textfield',
+        '#attributes' => array('placeholder' => t('Email Address')),
+    );
+    $form['message'] = array(
+        '#type' => 'textarea',
+        '#attributes' => array('placeholder' => t('Message')),
+    );
+    $form['captcha'] = array(
+        '#type' => 'captcha',
+        '#captcha_type' => 'image_captcha/Image',
+    );
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Submit',
+    );
+
+    return $form;
+}
+
+function contact_form_submit($form, &$form_state) {
+    global $base_url;
+    $fname = $form['first_name']['#value'];
+    $lname = $form['last_name']['#value'];
+    $email = $form['email_address']['#value'];
+    $subject = $form['subject']['#value'];
+    $cmessage = $form['message']['#value'];
+	
+    // send email
+    $to1 = variable_get('contact_email1');
+    $to2 = variable_get('contact_email2');
+    $to3 = variable_get('contact_email3');
+    $to4 = variable_get('contact_email4');
+    $to5 = variable_get('contact_email5');
+    $subject = $subject;
+    $message = "Name: ".$fname." ".$lname." <br />Email: $email <br />Message: <br />".$cmessage;	
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
+    $headers .= "From: <".$email.">" . "\r\n";
+
+    if (isset($to1)) $sent_email = mail($to1,$subject,$message,$headers);
+    if (isset($to2)) $sent_email = mail($to2,$subject,$message,$headers);
+    if (isset($to3)) $sent_email = mail($to3,$subject,$message,$headers);
+    if (isset($to4)) $sent_email = mail($to4,$subject,$message,$headers);
+    if (isset($to5)) $sent_email = mail($to5,$subject,$message,$headers);
+    //if ($sent_email) $success = 1;
+
+    drupal_set_message("Email succesfully sent", 'notice');
+    drupal_goto($base_url."/contact/1");
+}
+
+function contact() {
+    global $base_url;
+    $output = '
+    <h2>Contact</h2>
+        <div class="row">
+            <div class="col-sm-7 box">
+                '.drupal_render(drupal_get_form('contact_form')).'
+            </div>
+            <div class="col-sm-1 hidden-xs"></div>
+            <div class="col-sm-4">
+                <ul class="contact-address style1">
+                    <!-- <li class="office-address">
+                        <i class="fa fa-map-marker"></i>
+                        <div class="details">
+                            <h5>Office Address</h5>
+                            <p>Hoffman Parkway, P.O Box 353 Mountain View. United States of America. </p>
+                        </div>
+                    </li>
+                    <li class="phone">
+                        <i class="fa fa-phone"></i>
+                        <div class="details">
+                            <h5>Phone</h5>
+                            <p>
+                                Local: 1-800-123-hello
+                                <br>
+                                Mobile: 1-800-123-hello
+                            </p>
+                        </div>
+                    </li>-->
+                    <li class="email-address">
+                        <i class="fa fa-envelope"></i>
+                        <div class="details">
+                            <h5><strong>Office Address</strong></h5>
+                            <p>
+                                AR12 SPORTS TALENTS MANAGEMENT
+                                <br>
+                                Victoria Bintaro Park AA12
+                                <br>
+                                Jl Raya Bintaro Utama Sektor 3A
+                                <br>
+                                Jakarta 12330
+                                <br>
+                            <a href="mailto:ar12management@gmail.com">ar12management@gmail.com</a></p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>';
+    //$output .= drupal_render(drupal_get_form('contact_form'));
+    
+    return $output;
+}
+
+function subscribe() {
+    global $base_url;
+    $email = $_POST['email'];
+    $tid = 1;
+    $subscribe = simplenews_subscribe_user($email, $tid, TRUE);
+    print $subscribe;
+    drupal_set_message('Your email has been submitted successfully', 'notice');
+    //drupal_goto($base_url);
+}
+
+// ==============================================================================================================================
+// CUSTOM FUNCTION
+// ==============================================================================================================================
+
+function _get_node_list($type=null, $limit=null, $sort='DESC', $banner_type='home') {
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', $type);
+    if ($type=='banner') $query->fieldCondition('field_banner_type', 'value', $banner_type, '=');
+    if ($type=='circuit') $query->fieldOrderBy('field_circuit_date', 'value', $sort);
+    if ($type=='race_schedule') $query->fieldOrderBy('field_race_date', 'value', $sort); 
+    if ($limit != null) $query->range(0, $limit);
+    $query->propertyOrderBy('created', $sort);
+    
+    $result = $query->execute();
+    $nodes = array();
+    if (!empty($result['node'])) {
+      $nodes = node_load_multiple(array_keys($result['node']));
+    }
+    
+    return $nodes;
+}
+
+function _date_format($date, $format = 'd M Y') {
+    $date = date($format, $date);
+    return $date;
+}
+
+function curPageURL() {
+ $pageURL = 'http';
+ if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+ $pageURL .= "://";
+ if ($_SERVER["SERVER_PORT"] != "80") {
+  $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+ } else {
+  $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+ }
+ return $pageURL;
+}
+?>

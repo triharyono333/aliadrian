@@ -1,0 +1,6 @@
+; $Id$
+name = Admin Pages
+description = Module to Create Admin Pages
+version = "0.1-Tri"
+package = extra
+core = 7.x

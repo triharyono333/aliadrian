@@ -1,0 +1,6 @@
+; $Id$
+name = Custom Form Alter
+description = Module to Alter Form
+version = "0.1-Tri"
+package = extra
+core = 7.x

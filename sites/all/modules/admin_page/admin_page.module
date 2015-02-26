@@ -1,0 +1,117 @@
+<?php
+
+// $Id$
+function admin_page_menu() {
+    // custom page other setting
+    $items['admin/other_setting'] = array(
+            'title' => t('Other Setting'),
+            'description' => 'other setting',
+            'page callback' => 'other_setting',
+            'access arguments' => array('access other setting'),
+            'type' =>  MENU_CALLBACK,
+    );
+    return $items;
+}
+
+/**
+* Implements hook_permission().
+*/
+function admin_page_permission() {
+  return array(
+    'access other setting' => array(
+      'title' => t('Access other setting for admin'),
+    ), 
+  );
+}
+
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * START OTHER SETTING 
+ ------------------------------------------------------------------------------------------------------------------------- 
+ */
+
+function other_setting_form($form, &$form_state) {
+    $form['contact_email1'] = array(
+        '#type' => 'textfield', 
+        '#title' => 'Contact Email 1',
+        '#required' => true,
+        '#default_value' => variable_get('contact_email1'),
+    );
+    $form['contact_email2'] = array(
+        '#type' => 'textfield', 
+        '#title' => 'Contact Email 2',
+        '#default_value' => variable_get('contact_email2'),
+    );
+    $form['contact_email3'] = array(
+        '#type' => 'textfield', 
+        '#title' => 'Contact Email 3',
+        '#default_value' => variable_get('contact_email3'),
+    );
+    $form['contact_email4'] = array(
+        '#type' => 'textfield', 
+        '#title' => 'Contact Email 4',
+        '#default_value' => variable_get('contact_email4'),
+    );
+    $form['contact_email5'] = array(
+        '#type' => 'textfield', 
+        '#title' => 'Contact Email 5',
+        '#default_value' => variable_get('contact_email5'),
+    );
+    $form['office_address'] = array(
+        '#type' => 'textfield', 
+        '#title' => 'Office Address',
+        '#type' => 'text_format',
+        '#default_value' => variable_get('office_address'),
+    );
+    $form['twitter'] = array(
+        '#type' => 'textfield', 
+        '#title' => 'Twitter',
+        '#default_value' => variable_get('twitter'),
+    );
+    $form['facebook'] = array(
+        '#type' => 'textfield', 
+        '#title' => 'Facebook',
+        '#default_value' => variable_get('facebook'),
+    );
+    $form['youtube'] = array(
+        '#type' => 'textfield', 
+        '#title' => 'Youtube',
+        '#default_value' => variable_get('youtube'),
+    );
+    $form['submit'] = array(
+        '#type' => 'submit', 
+        '#title' => 'Submit',
+        '#value' => 'Submit'
+    );
+
+    return $form;    
+}
+
+function other_setting_form_submit($form, &$form_state) {
+    //print "<pre>".print_r($form['footer_text']['value']['#value'], true)."</pre>"; exit;
+    $contact_email1 = variable_set('contact_email1', $form['contact_email1']['#value']);
+    $contact_email2 = variable_set('contact_email2', $form['contact_email2']['#value']);
+    $contact_email3 = variable_set('contact_email3', $form['contact_email3']['#value']);
+    $contact_email4 = variable_set('contact_email4', $form['contact_email4']['#value']);
+    $contact_email5 = variable_set('contact_email5', $form['contact_email5']['#value']);
+    $office_address = variable_set('office_address', $form['office_address']['value']['#value']);
+    $twitter = variable_set('twitter', $form['twitter']['#value']);
+    $facebook = variable_set('facebook', $form['facebook']['#value']);
+    $youtube = variable_set('youtube', $form['youtube']['#value']);
+    drupal_set_message("Save Successfully", "notice");
+}
+
+function other_setting() {
+    $output = "<h1>Other Setting</h1>";
+    $output .= drupal_render(drupal_get_form('other_setting_form'));
+    
+    return $output;
+}
+
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * END OTHER SETTING 
+ ------------------------------------------------------------------------------------------------------------------------- 
+ */
+
+?>

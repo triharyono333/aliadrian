@@ -1,0 +1,11 @@
+name = Race   
+description = A custom theme for Race
+package = Custom
+version = VERSION
+core = 7.x
+
+; Information added by tri packaging script on 2013-07-25
+version = "7.22"
+project = "drupal"
+datestamp = "1365027012"
+

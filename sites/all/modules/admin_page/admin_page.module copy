@@ -1,0 +1,831 @@
+<?php
+
+// $Id$
+define("CONFIRM_DELETE", '"Are you sure you want to delete these item?"');
+
+function admin_page_menu() {
+	// manage rider
+	$items['admin/node_rider'] = array(
+            'title' => t('Rider'),
+            'description' => 'rider',
+            'page callback' => 'node_rider',
+            'access arguments' => array('access rider'),
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['admin/node_rider/action'] = array(
+            'title' => t('rider'),
+            'description' => 'Rider',
+            'page callback' => 'node_rider_action',
+            'access arguments' => array('access rider'),
+            'type' =>  MENU_CALLBACK,
+	);
+	// manage bike
+	$items['admin/node_bike'] = array(
+            'title' => t('Bike'),
+            'description' => 'bike',
+            'page callback' => 'node_bike',
+            'access arguments' => array('access bike'),
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['admin/node_bike/action'] = array(
+            'title' => t('bike'),
+            'description' => 'bike',
+            'page callback' => 'node_bike_action',
+            'access arguments' => array('access bike'),
+            'type' =>  MENU_CALLBACK,
+	);
+	// manage circuit
+	$items['admin/node_circuit'] = array(
+            'title' => t('Circuit'),
+            'description' => 'circuit',
+            'page callback' => 'node_circuit',
+            'access arguments' => array('access circuit'),
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['admin/node_rider/action'] = array(
+            'title' => t('circuit'),
+            'description' => 'circuit',
+            'page callback' => 'node_circuit_action',
+            'access arguments' => array('access circuit'),
+            'type' =>  MENU_CALLBACK,
+	);
+	// manage gallery
+	$items['admin/node_gallery'] = array(
+            'title' => t('Gallery'),
+            'description' => 'gallery',
+            'page callback' => 'node_gallery',
+            'access arguments' => array('access gallery'),
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['admin/node_gallery/action'] = array(
+            'title' => t('gallery'),
+            'description' => 'gallery',
+            'page callback' => 'node_gallery_action',
+            'access arguments' => array('access gallery'),
+            'type' =>  MENU_CALLBACK,
+	);
+	// manage video
+	$items['admin/node_video'] = array(
+            'title' => t('Video'),
+            'description' => 'video',
+            'page callback' => 'node_video',
+            'access arguments' => array('access video'),
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['admin/node_video/action'] = array(
+            'title' => t('video'),
+            'description' => 'video',
+            'page callback' => 'node_video_action',
+            'access arguments' => array('access video'),
+            'type' =>  MENU_CALLBACK,
+	);
+	// manage news
+	$items['admin/node_news'] = array(
+            'title' => t('News'),
+            'description' => 'news',
+            'page callback' => 'node_news',
+            'access arguments' => array('access news'),
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['admin/node_news/action'] = array(
+            'title' => t('news'),
+            'description' => 'news',
+            'page callback' => 'node_news_action',
+            'access arguments' => array('access news'),
+            'type' =>  MENU_CALLBACK,
+	);
+	// manage sponsor
+	$items['admin/node_sponsor'] = array(
+            'title' => t('Sponsor'),
+            'description' => 'sponsor',
+            'page callback' => 'node_sponsor',
+            'access arguments' => array('access sponsor'),
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['admin/node_sponsor/action'] = array(
+            'title' => t('sponsor'),
+            'description' => 'sponsor',
+            'page callback' => 'node_sponsor_action',
+            'access arguments' => array('access sponsor'),
+            'type' =>  MENU_CALLBACK,
+	);
+	// manage content
+	$items['admin/node_content'] = array(
+            'title' => t('Content'),
+            'description' => 'content',
+            'page callback' => 'node_content',
+            'access arguments' => array('access content'),
+            'type' =>  MENU_CALLBACK,
+	);
+        $items['admin/node_content/action'] = array(
+            'title' => t('content'),
+            'description' => 'content',
+            'page callback' => 'node_content_action',
+            'access arguments' => array('access content'),
+            'type' =>  MENU_CALLBACK,
+	);
+	// delete node
+        $items['admin/delete_node'] = array(
+		'title' => t('Delete node'),
+		'description' => 'delete node',
+		'page callback' => '_delete_node',
+		'access arguments' => array('access delete node'),
+		'type' =>  MENU_CALLBACK,
+	);
+	return $items;
+}
+
+/**
+* Implements hook_permission().
+*/
+function admin_page_permission() {
+  return array(
+    'access rider' => array(
+      'title' => t('Access rider for admin'),
+    ), 
+    'access video' => array(
+      'title' => t('Access video for admin'),
+    ), 
+    'access gallery' => array(
+      'title' => t('Access gallery for admin'),
+    ), 
+    'access news' => array(
+      'title' => t('Access news for admin'),
+    ), 
+    'access bike' => array(
+      'title' => t('Access bike for admin'),
+    ),  
+    'access circuit' => array(
+      'title' => t('Access circuit for admin'),
+    ),  
+    'access sponsor' => array(
+      'title' => t('Access sponsor for admin'),
+    ),  
+    'access content' => array(
+      'title' => t('Access content for admin'),
+    ),  
+    'access delete node' => array(
+      'title' => t('delete node'),
+    )
+  );
+}
+
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * START RIDER 
+ ------------------------------------------------------------------------------------------------------------------------- 
+ */
+// SEARCH FORM
+function admin_page_rider_search_form($form, &$form_state) {
+    $form['rider_name'] = array(
+        '#type' => 'textfield', 
+        '#title' => 'Rider Name',
+        '#default_value' => $_SESSION['rider_name'],
+    );
+    
+    $form['submit'] = array(
+        '#type' => 'submit', 
+        '#title' => 'Submit',
+        '#value' => 'Submit'
+    );
+
+    return $form;
+}
+function admin_page_rider_search_form_submit($node, &$form_state) {
+    $_SESSION['rider_name'] = $node['rider_name']['#value'];
+}
+
+function node_rider() {
+    global $base_url;
+    $output = "<h1>Search Form</h1>";
+    $output .= drupal_render(drupal_get_form('admin_page_rider_search_form'));
+
+    // query to get total row
+    $query = "SELECT COUNT(nid) FROM node WHERE type = 'rider'";
+    $total = db_query($query)->fetchField();
+    pager_default_initialize($total,20);
+    
+    // query for paging
+    $query = db_select('node', 'a');
+    $query->join('field_data_field_rider_photo', 'b', 'a.nid = b.entity_id');
+    $query->join('file_managed', 'c', 'b.field_rider_photo_fid = c.fid');
+    $query->join('field_data_field_rider_country', 'd', 'a.nid = d.entity_id');
+    $query->join('field_data_field_rider_number', 'e', 'a.nid = e.entity_id');
+    $query->join('field_data_field_rider_team', 'f', 'a.nid = f.entity_id');
+    $query = $query->condition('type', 'rider');
+    // fitler from search form
+    if ($_SESSION['rider_name']!="") $query = $query->condition('title', '%'.$_SESSION['rider_name'].'%', 'LIKE');
+    $query = $query->extend('PagerDefault')
+        ->limit(20)
+        ->fields('a', array('nid', 'title'))
+        ->fields('c', array('filename', 'uri'))
+        ->fields('d', array('field_rider_country_value'))
+        ->fields('e', array('field_rider_number_value'))
+        ->fields('f', array('field_rider_team_value'));
+    $result = $query->execute();
+    //print "<pre>".print_r($_SESSION, true)."</pre>";
+
+    $output .= $script."
+    <div class='clear'>&nbsp;</div>
+    <a href='".$base_url."/node/add/rider'>+ add new rider<a/>
+    <table>
+    <tr>
+        <th>Photo</th>
+        <th>Name</th>
+        <th>Country</th>
+        <th>Team</th>
+        <th></th>
+    </tr>";
+
+    foreach ($result as $rider) {
+    $filename = str_replace("public://","",$rider->uri);
+    $output .= "
+    <tr>
+        <td><img width='80px' src='".$base_url."/sites/default/files/".$filename."' /></td>
+        <td>".$rider->title." (".$rider->field_rider_number_value.")</td>
+        <td>".$rider->field_rider_country_value."</td>
+        <td>".$rider->field_rider_team_value."</td>
+        <td>
+            <ul class='links inline'>
+            <li class='edit first'><a href='".$base_url."/node/".$rider->nid."/edit'>edit</a></li>
+            <li class='delete last'><a href='".$base_url."/admin/delete_node/".$rider->nid."/rider' onclick='return confirm(".CONFIRM_DELETE.");'>delete</a></li>
+            </ul>
+        </td>
+    </tr>";
+    }
+
+    $output .= "
+    <tr><td colspan='6'>".theme('pager')."</td></tr>
+    </table>
+    ";
+
+    pager_default_initialize($total,20);
+    $output .= theme('pager');
+    
+    return $output;
+}
+
+function rider_action() {
+    global $base_url;
+    if (isset($_POST['advertise'])) {
+        foreach($_POST['advertise'] as $key=>$nid) {
+            node_delete($nid);
+        }
+    } else {
+        drupal_set_message("No item selected");
+    }
+    drupal_goto($base_url."/admin/node_advertise");
+}
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * END OF RIDER 
+ ------------------------------------------------------------------------------------------------------------------------- 
+*/
+
+
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * START BIKE 
+ ------------------------------------------------------------------------------------------------------------------------- 
+ */
+
+function node_bike() {
+    global $base_url;
+
+    // query to get total row
+    $query = "SELECT COUNT(nid) FROM node WHERE type = 'bike'";
+    $total = db_query($query)->fetchField();
+    pager_default_initialize($total,20);
+    
+    // query for paging
+    $query = db_select('node', 'a');
+    $query->join('field_data_field_bike_image', 'b', 'a.nid = b.entity_id');
+    $query->join('file_managed', 'c', 'b.field_bike_image_fid = c.fid');
+    $query = $query->condition('type', 'bike');
+    $query = $query->extend('PagerDefault')
+        ->limit(20)
+        ->fields('a', array('nid', 'title'))
+        ->fields('c', array('filename', 'uri'));
+    $result = $query->execute();
+    //print "<pre>".print_r($_SESSION, true)."</pre>";
+
+    $output .= $script."
+    <div class='clear'>&nbsp;</div>
+    <a href='".$base_url."/node/add/bike'>+ add new bike<a/>
+    <table>
+    <tr>
+        <th>Title</th>
+        <th>Image</th>
+        <th></th>
+    </tr>";
+
+    foreach ($result as $bike) {
+    $filename = str_replace("public://","",$bike->uri);
+    $output .= "
+    <tr>
+        <td>".$bike->title."</td>
+        <td><img width='200px' src='".$base_url."/sites/default/files/".$filename."' /></td>
+        <td>
+            <ul class='links inline'>
+            <li class='edit first'><a href='".$base_url."/node/".$bike->nid."/edit'>edit</a></li>
+            <li class='delete last'><a href='".$base_url."/admin/delete_node/".$bike->nid."/bike' onclick='return confirm(".CONFIRM_DELETE.");'>delete</a></li>
+            </ul>
+        </td>
+    </tr>";
+    }
+
+    $output .= "
+    <tr><td colspan='3'>".theme('pager')."</td></tr>
+    </table>
+    ";
+
+    pager_default_initialize($total,20);
+    $output .= theme('pager');
+    
+    return $output;
+}
+
+function bike_action() {
+    global $base_url;
+    if (isset($_POST['advertise'])) {
+        foreach($_POST['advertise'] as $key=>$nid) {
+            node_delete($nid);
+        }
+    } else {
+        drupal_set_message("No item selected");
+    }
+    drupal_goto($base_url."/admin/node_advertise");
+}
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * END OF BIKE 
+ ------------------------------------------------------------------------------------------------------------------------- 
+*/
+
+
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * START GALLERY 
+ ------------------------------------------------------------------------------------------------------------------------- 
+ */
+
+function node_gallery() {
+    global $base_url;
+
+    // query to get total row
+    $query = "SELECT COUNT(nid) FROM node WHERE type = 'gallery'";
+    $total = db_query($query)->fetchField();
+    pager_default_initialize($total,20);
+    
+    // query for paging
+    $query = db_select('node', 'a');
+    $query->join('field_data_field_gallery_image', 'b', 'a.nid = b.entity_id');
+    $query->join('file_managed', 'c', 'b.field_gallery_image_fid = c.fid');
+    $query = $query->condition('type', 'gallery');
+    $query = $query->extend('PagerDefault')
+        ->limit(20)
+        ->fields('a', array('nid', 'title'))
+        ->fields('c', array('filename', 'uri'));
+    $result = $query->execute();
+
+    $output .= $script."
+    <div class='clear'>&nbsp;</div>
+    <a href='".$base_url."/node/add/gallery'>+ add new gallery<a/>
+    <table>
+    <tr>
+        <th>Title</th>
+        <th>Image</th>
+        <th></th>
+    </tr>";
+
+    foreach ($result as $gallery) {
+    $filename = str_replace("public://","",$gallery->uri);
+    $output .= "
+    <tr>
+        <td>".$gallery->title."</td>
+        <td><img width='200px' src='".$base_url."/sites/default/files/".$filename."' /></td>
+        <td>
+            <ul class='links inline'>
+            <li class='edit first'><a href='".$base_url."/node/".$gallery->nid."/edit'>edit</a></li>
+            <li class='delete last'><a href='".$base_url."/admin/delete_node/".$gallery->nid."/gallery' onclick='return confirm(".CONFIRM_DELETE.");'>delete</a></li>
+            </ul>
+        </td>
+    </tr>";
+    }
+
+    $output .= "
+    <tr><td colspan='3'>".theme('pager')."</td></tr>
+    </table>
+    ";
+
+    pager_default_initialize($total,20);
+    $output .= theme('pager');
+    
+    return $output;
+}
+
+function gallery_action() {
+    global $base_url;
+    if (isset($_POST['advertise'])) {
+        foreach($_POST['advertise'] as $key=>$nid) {
+            node_delete($nid);
+        }
+    } else {
+        drupal_set_message("No item selected");
+    }
+    drupal_goto($base_url."/admin/node_advertise");
+}
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * END OF GALLERY 
+ ------------------------------------------------------------------------------------------------------------------------- 
+*/
+
+
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * START CIRCUIT 
+ ------------------------------------------------------------------------------------------------------------------------- 
+ */
+
+function node_circuit() {
+    global $base_url;
+
+    // query to get total row
+    $query = "SELECT COUNT(nid) FROM node WHERE type = 'circuit'";
+    $total = db_query($query)->fetchField();
+    pager_default_initialize($total,20);
+    
+    // query for paging
+    $query = db_select('node', 'a');
+    $query->join('field_data_field_circuit_image', 'b', 'a.nid = b.entity_id');
+    $query->join('file_managed', 'c', 'b.field_circuit_image_fid = c.fid');
+    $query = $query->condition('type', 'circuit');
+    $query = $query->extend('PagerDefault')
+        ->limit(20)
+        ->fields('a', array('nid', 'title'))
+        ->fields('c', array('filename', 'uri'));
+    $result = $query->execute();
+
+    $output .= $script."
+    <div class='clear'>&nbsp;</div>
+    <a href='".$base_url."/node/add/circuit'>+ add new circuit<a/>
+    <table>
+    <tr>
+        <th>Title</th>
+        <th>Image</th>
+        <th></th>
+    </tr>";
+
+    foreach ($result as $circuit) {
+    $filename = str_replace("public://","",$circuit->uri);
+    $output .= "
+    <tr>
+        <td>".$circuit->title."</td>
+        <td><img width='200px' src='".$base_url."/sites/default/files/".$filename."' /></td>
+        <td>
+            <ul class='links inline'>
+            <li class='edit first'><a href='".$base_url."/node/".$circuit->nid."/edit'>edit</a></li>
+            <li class='delete last'><a href='".$base_url."/admin/delete_node/".$circuit->nid."/circuit' onclick='return confirm(".CONFIRM_DELETE.");'>delete</a></li>
+            </ul>
+        </td>
+    </tr>";
+    }
+
+    $output .= "
+    <tr><td colspan='3'>".theme('pager')."</td></tr>
+    </table>
+    ";
+
+    pager_default_initialize($total,20);
+    $output .= theme('pager');
+    
+    return $output;
+}
+
+function circuit_action() {
+    global $base_url;
+    if (isset($_POST['advertise'])) {
+        foreach($_POST['advertise'] as $key=>$nid) {
+            node_delete($nid);
+        }
+    } else {
+        drupal_set_message("No item selected");
+    }
+    drupal_goto($base_url."/admin/node_advertise");
+}
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * END OF CIRCUIT 
+ ------------------------------------------------------------------------------------------------------------------------- 
+*/
+
+
+
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * START SPONSOR 
+ ------------------------------------------------------------------------------------------------------------------------- 
+ */
+
+function node_sponsor() {
+    global $base_url;
+
+    // query to get total row
+    $query = "SELECT COUNT(nid) FROM node WHERE type = 'sponsor'";
+    $total = db_query($query)->fetchField();
+    pager_default_initialize($total,20);
+    
+    // query for paging
+    $query = db_select('node', 'a');
+    $query->join('field_data_field_sponsor_image', 'b', 'a.nid = b.entity_id');
+    $query->join('file_managed', 'c', 'b.field_sponsor_image_fid = c.fid');
+    $query = $query->condition('type', 'sponsor');
+    $query = $query->extend('PagerDefault')
+        ->limit(20)
+        ->fields('a', array('nid', 'title'))
+        ->fields('c', array('filename', 'uri'));
+    $result = $query->execute();
+
+    $output .= $script."
+    <div class='clear'>&nbsp;</div>
+    <a href='".$base_url."/node/add/sponsor'>+ add new sponsor<a/>
+    <table>
+    <tr>
+        <th>Title</th>
+        <th>Image</th>
+        <th></th>
+    </tr>";
+
+    foreach ($result as $sponsor) {
+    $filename = str_replace("public://","",$sponsor->uri);
+    $output .= "
+    <tr>
+        <td>".$sponsor->title."</td>
+        <td><img width='200px' src='".$base_url."/sites/default/files/".$filename."' /></td>
+        <td>
+            <ul class='links inline'>
+            <li class='edit first'><a href='".$base_url."/node/".$sponsor->nid."/edit'>edit</a></li>
+            <li class='delete last'><a href='".$base_url."/admin/delete_node/".$sponsor->nid."/sponsor' onclick='return confirm(".CONFIRM_DELETE.");'>delete</a></li>
+            </ul>
+        </td>
+    </tr>";
+    }
+
+    $output .= "
+    <tr><td colspan='3'>".theme('pager')."</td></tr>
+    </table>
+    ";
+
+    pager_default_initialize($total,20);
+    $output .= theme('pager');
+    
+    return $output;
+}
+
+function sponsor_action() {
+    global $base_url;
+    if (isset($_POST['advertise'])) {
+        foreach($_POST['advertise'] as $key=>$nid) {
+            node_delete($nid);
+        }
+    } else {
+        drupal_set_message("No item selected");
+    }
+    drupal_goto($base_url."/admin/node_advertise");
+}
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * END OF SPONSOR 
+ ------------------------------------------------------------------------------------------------------------------------- 
+*/
+
+
+
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * START NEWS 
+ ------------------------------------------------------------------------------------------------------------------------- 
+ */
+
+function node_news() {
+    global $base_url;
+
+    // query to get total row
+    $query = "SELECT COUNT(nid) FROM node WHERE type = 'news'";
+    $total = db_query($query)->fetchField();
+    pager_default_initialize($total,20);
+    
+    // query for paging
+    $query = db_select('node', 'a');
+    $query = $query->condition('type', 'news');
+    $query = $query->extend('PagerDefault')
+        ->limit(20)
+        ->fields('a', array('nid', 'title'));
+    $result = $query->execute();
+
+    $output .= $script."
+    <div class='clear'>&nbsp;</div>
+    <a href='".$base_url."/node/add/news'>+ add new news<a/>
+    <table>
+    <tr>
+        <th>Title</th>
+        <th></th>
+    </tr>";
+
+    foreach ($result as $news) {
+    $output .= "
+    <tr>
+        <td>".$news->title."</td>
+        <td>
+            <ul class='links inline'>
+            <li class='edit first'><a href='".$base_url."/node/".$news->nid."/edit'>edit</a></li>
+            <li class='delete last'><a href='".$base_url."/admin/delete_node/".$news->nid."/news' onclick='return confirm(".CONFIRM_DELETE.");'>delete</a></li>
+            </ul>
+        </td>
+    </tr>";
+    }
+
+    $output .= "
+    <tr><td colspan='2'>".theme('pager')."</td></tr>
+    </table>
+    ";
+
+    pager_default_initialize($total,20);
+    $output .= theme('pager');
+    
+    return $output;
+}
+
+function news_action() {
+    global $base_url;
+    if (isset($_POST['advertise'])) {
+        foreach($_POST['advertise'] as $key=>$nid) {
+            node_delete($nid);
+        }
+    } else {
+        drupal_set_message("No item selected");
+    }
+    drupal_goto($base_url."/admin/node_advertise");
+}
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * END OF NEWS 
+ ------------------------------------------------------------------------------------------------------------------------- 
+*/
+
+
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * START VIDEO 
+ ------------------------------------------------------------------------------------------------------------------------- 
+ */
+
+function node_video() {
+    global $base_url;
+
+    // query to get total row
+    $query = "SELECT COUNT(nid) FROM node WHERE type = 'video'";
+    $total = db_query($query)->fetchField();
+    pager_default_initialize($total,20);
+    
+    // query for paging
+    $query = db_select('node', 'a');
+    $query = $query->condition('type', 'video');
+    $query = $query->extend('PagerDefault')
+        ->limit(20)
+        ->fields('a', array('nid', 'title'));
+    $result = $query->execute();
+
+    $output .= $script."
+    <div class='clear'>&nbsp;</div>
+    <a href='".$base_url."/node/add/video'>+ add new video<a/>
+    <table>
+    <tr>
+        <th>Title</th>
+        <th></th>
+    </tr>";
+
+    foreach ($result as $video) {
+    $output .= "
+    <tr>
+        <td>".$video->title."</td>
+        <td>
+            <ul class='links inline'>
+            <li class='edit first'><a href='".$base_url."/node/".$video->nid."/edit'>edit</a></li>
+            <li class='delete last'><a href='".$base_url."/admin/delete_node/".$video->nid."/video' onclick='return confirm(".CONFIRM_DELETE.");'>delete</a></li>
+            </ul>
+        </td>
+    </tr>";
+    }
+
+    $output .= "
+    <tr><td colspan='2'>".theme('pager')."</td></tr>
+    </table>
+    ";
+
+    pager_default_initialize($total,20);
+    $output .= theme('pager');
+    
+    return $output;
+}
+
+function video_action() {
+    global $base_url;
+    if (isset($_POST['advertise'])) {
+        foreach($_POST['advertise'] as $key=>$nid) {
+            node_delete($nid);
+        }
+    } else {
+        drupal_set_message("No item selected");
+    }
+    drupal_goto($base_url."/admin/node_advertise");
+}
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * END OF VIDEO 
+ ------------------------------------------------------------------------------------------------------------------------- 
+*/
+
+
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * START CONTENT 
+ ------------------------------------------------------------------------------------------------------------------------- 
+ */
+
+function node_content() {
+    global $base_url;
+
+    // query to get total row
+    $query = "SELECT COUNT(nid) FROM node WHERE type = 'page'";
+    $total = db_query($query)->fetchField();
+    pager_default_initialize($total,20);
+    
+    // query for paging
+    $query = db_select('node', 'a');
+    $query = $query->condition('type', 'page');
+    $query = $query->extend('PagerDefault')
+        ->limit(20)
+        ->fields('a', array('nid', 'title'));
+    $result = $query->execute();
+
+    $output .= $script."
+    <div class='clear'>&nbsp;</div>
+    <table>
+    <tr>
+        <th>Title</th>
+        <th></th>
+    </tr>";
+
+    foreach ($result as $content) {
+    $output .= "
+    <tr>
+        <td>".$content->title."</td>
+        <td>
+            <ul class='links inline'>
+            <li class='edit first'><a href='".$base_url."/node/".$content->nid."/edit'>edit</a></li>
+            <li class='delete last'><a href='".$base_url."/admin/delete_node/".$content->nid."/video' onclick='return confirm(".CONFIRM_DELETE.");'>delete</a></li>
+            </ul>
+        </td>
+    </tr>";
+    }
+
+    $output .= "
+    <tr><td colspan='2'>".theme('pager')."</td></tr>
+    </table>
+    ";
+
+    pager_default_initialize($total,20);
+    $output .= theme('pager');
+    
+    return $output;
+}
+
+function content_action() {
+    global $base_url;
+    if (isset($_POST['advertise'])) {
+        foreach($_POST['advertise'] as $key=>$nid) {
+            node_delete($nid);
+        }
+    } else {
+        drupal_set_message("No item selected");
+    }
+    drupal_goto($base_url."/admin/node_advertise");
+}
+/* 
+ -------------------------------------------------------------------------------------------------------------------------
+ * END OF CONTENT 
+ ------------------------------------------------------------------------------------------------------------------------- 
+*/
+
+
+function _delete_node($nid) {
+    if ($nid == "" || $nid == null) $nid = arg(2);
+    if(isset($nid)) node_delete($nid);
+    $type = arg(3);
+    drupal_set_message($type.' deleted');
+    drupal_goto($GLOBALS['base_url'].'/admin/node_'.$type);
+}
+
+?>
